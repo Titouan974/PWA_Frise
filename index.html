@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Timeline PWA</title>
+
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0f172a" />
+
+  <style>
+    body{margin:0;font-family:system-ui;background:#0f172a;color:white}
+    header{padding:20px;text-align:center;font-size:24px;font-weight:bold}
+
+    .timeline{
+      position:relative;
+      margin:40px auto;
+      padding:20px;
+      width:90%;
+      max-width:900px;
+    }
+
+    .timeline::before{
+      content:"";
+      position:absolute;
+      left:50%;
+      width:4px;
+      background:linear-gradient(#38bdf8,#a78bfa);
+      top:0;
+      bottom:0;
+      transform:translateX(-50%);
+    }
+
+    .event{
+      width:45%;
+      padding:15px;
+      background:#1e293b;
+      border-radius:16px;
+      margin:20px 0;
+      position:relative;
+      box-shadow:0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    .event:nth-child(odd){
+      left:0;
+    }
+
+    .event:nth-child(even){
+      left:55%;
+    }
+
+    .date{font-weight:bold;color:#38bdf8}
+    .desc{margin-top:6px;opacity:.9}
+
+    footer{padding:30px;text-align:center;font-size:14px;opacity:.6}
+  </style>
+</head>
+<body>
+
+<header>Ma Timeline</header>
+
+<div class="timeline" id="timeline"></div>
+
+<footer>PWA Timeline</footer>
+
+<script>
+const events = [
+  {date:"2024",desc:"Création du projet"},
+  {date:"2025",desc:"Ajout des fonctionnalités"}
+]
+
+const container = document.getElementById("timeline")
+
+events.forEach(e=>{
+  const el=document.createElement("div")
+  el.className="event"
+  el.innerHTML=`<div class="date">${e.date}</div><div class="desc">${e.desc}</div>`
+  container.appendChild(el)
+})
+</script>
+
+</body>
+</html>
