@@ -2,117 +2,88 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Timeline PWA</title>
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#020617" />
 
 <style>
-
 *{box-sizing:border-box}
 
 body{
 margin:0;
 font-family:system-ui,-apple-system,Segoe UI,Roboto;
-background:radial-gradient(circle at top,#0f172a,#020617);
+background:#020617;
 color:white;
-overflow-x:hidden;
 }
 
 header{
-padding:20px 18px 10px 18px;
+padding:20px;
 }
 
-h1{
-margin:0;
-font-size:22px;
-letter-spacing:0.5px;
-}
-
-.install{
-margin-top:12px;
-padding:10px 16px;
-border:none;
-border-radius:12px;
-background:linear-gradient(135deg,#38bdf8,#a78bfa);
-color:#020617;
-font-weight:700;
-}
+h1{margin:0;font-size:22px}
 
 .timeline{
 position:relative;
-padding:40px 0 80px 0;
-width:100%;
-max-width:520px;
+max-width:700px;
 margin:auto;
+padding:40px 0;
 }
 
-/* central glowing line */
 .timeline::before{
 content:"";
 position:absolute;
-left:50%;
+left:30px;
 top:0;
 bottom:0;
 width:3px;
 background:linear-gradient(#38bdf8,#a78bfa);
-transform:translateX(-50%);
-box-shadow:0 0 15px #38bdf8;
+box-shadow:0 0 10px #38bdf8;
 }
 
 .event{
 position:relative;
-width:50%;
-padding:10px 16px;
-margin:35px 0;
-}
-
-.event.left{
-left:0;
-text-align:right;
-}
-
-.event.right{
-left:50%;
+margin:30px 0;
+padding-left:70px;
+cursor:pointer;
 }
 
 .node{
-width:18px;
-height:18px;
+position:absolute;
+left:22px;
+top:5px;
+width:16px;
+height:16px;
 border-radius:50%;
 background:linear-gradient(135deg,#38bdf8,#a78bfa);
-position:absolute;
-top:8px;
-box-shadow:0 0 12px #38bdf8;
+box-shadow:0 0 10px #38bdf8;
 }
 
-.event.left .node{
-right:-9px;
-}
-
-.event.right .node{
-left:-9px;
-}
-
-.date{
+.period{
 font-weight:700;
 font-size:16px;
-opacity:.9;
+color:#38bdf8;
 }
 
-.card{
-margin-top:10px;
+.title{
+font-size:17px;
+margin-top:2px;
+font-weight:600;
+}
+
+.content{
+margin-top:12px;
 background:#1e293b;
-border-radius:16px;
-padding:14px;
-font-size:14px;
-line-height:1.4;
+border-radius:14px;
+padding:16px;
 display:none;
-box-shadow:0 15px 30px rgba(0,0,0,.45);
+line-height:1.5;
+font-size:14px;
+white-space:pre-line;
 }
 
-.event.open .card{
+.event.open .content{
 display:block;
 animation:fade .25s ease;
 }
@@ -122,46 +93,18 @@ from{opacity:0;transform:translateY(-5px)}
 to{opacity:1;transform:translateY(0)}
 }
 
-/* MOBILE IMPROVEMENT */
-@media(max-width:600px){
-
-.timeline::before{
-left:26px;
-}
-
-.event{
-width:100%;
-padding-left:60px;
-margin:28px 0;
-}
-
-.event.left,
-.event.right{
-left:0;
-text-align:left;
-}
-
-.node{
-left:18px !important;
-right:auto;
-}
-
-}
-
 footer{
 text-align:center;
+padding:20px;
 font-size:12px;
 opacity:.5;
-padding:25px;
 }
-
 </style>
 </head>
 <body>
 
 <header>
-<h1>Ma Frise Chronologique</h1>
-<button id="installBtn" class="install" style="display:none">Installer l'app</button>
+<h1>Frise du Design</h1>
 </header>
 
 <div class="timeline" id="timeline"></div>
@@ -172,38 +115,59 @@ padding:25px;
 
 const events=[
 {
- date:"2018",
- desc:"Première idée du projet et recherches initiales."
+period:"1860–1910",
+title:"Arts & Crafts",
+content:`Idée principale et contexte :
+Le mouvement Arts & Crafts apparaît en Angleterre face à l’industrialisation. La production de masse entraîne des objets uniformes, peu durables et sans âme.
+
+Valeurs et caractéristiques :
+• Matériaux naturels
+• Formes simples
+• Durabilité
+
+Designer clé :
+William Morris`
 },
 {
- date:"2020",
- desc:"Début du développement et premiers prototypes."
+period:"1890–1910",
+title:"Art nouveau",
+content:`Idée principale et contexte :
+Rejet des styles historiques et inspiration de la nature.
+
+Valeurs :
+• Lignes sinueuses
+• Motifs végétaux
+
+Designer :
+Hector Guimard`
 },
 {
- date:"2022",
- desc:"Amélioration de l'application et nouvelles fonctionnalités."
-},
-{
- date:"2024",
- desc:"Publication de la première version publique."
+period:"1919–1933",
+title:"Bauhaus",
+content:`Idée principale :
+Unifier art, artisanat et industrie.
+
+Valeurs :
+• Forme suit fonction
+• Minimalisme
+
+Designers :
+Marcel Breuer, Mies van der Rohe`
 }
 ]
 
 const timeline=document.getElementById("timeline")
 
-// build timeline
-
-events.forEach((e,i)=>{
-
-const side=i%2===0?"left":"right"
+events.forEach(e=>{
 
 const el=document.createElement("div")
-el.className=`event ${side}`
+el.className="event"
 
 el.innerHTML=`
 <div class="node"></div>
-<div class="date">${e.date}</div>
-<div class="card">${e.desc}</div>
+<div class="period">${e.period}</div>
+<div class="title">${e.title}</div>
+<div class="content">${e.content}</div>
 `
 
 el.addEventListener("click",()=>{
@@ -223,40 +187,9 @@ timeline.appendChild(el)
 
 })
 
-
-// PWA INSTALL
-
-let deferredPrompt
-const installBtn=document.getElementById("installBtn")
-
-window.addEventListener("beforeinstallprompt",e=>{
-
- e.preventDefault()
- deferredPrompt=e
- installBtn.style.display="inline-block"
-
-})
-
-installBtn.addEventListener("click",async()=>{
-
- if(!deferredPrompt) return
-
- deferredPrompt.prompt()
-
- const {outcome}=await deferredPrompt.userChoice
-
- if(outcome==="accepted"){
- installBtn.style.display="none"
- }
-
- deferredPrompt=null
-
-})
-
-
 // service worker
 if("serviceWorker" in navigator){
- navigator.serviceWorker.register("service-worker.js")
+navigator.serviceWorker.register("service-worker.js")
 }
 
 </script>
