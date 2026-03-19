@@ -18,10 +18,7 @@ background:#020617;
 color:white;
 }
 
-header{
-padding:20px;
-}
-
+header{padding:20px}
 h1{margin:0;font-size:22px}
 
 .timeline{
@@ -76,11 +73,37 @@ font-weight:600;
 margin-top:12px;
 background:#1e293b;
 border-radius:14px;
-padding:16px;
+padding:18px;
 display:none;
-line-height:1.5;
+line-height:1.6;
 font-size:14px;
-white-space:pre-line;
+}
+
+/* Styled content */
+.content h3{
+margin:18px 0 8px 0;
+font-size:15px;
+color:#a78bfa;
+}
+
+.content p{
+margin:8px 0;
+opacity:.9;
+}
+
+.content ul{
+padding-left:18px;
+margin:8px 0;
+}
+
+.content li{
+margin:6px 0;
+}
+
+.content .block{
+margin-top:12px;
+padding-top:10px;
+border-top:1px solid rgba(255,255,255,0.08);
 }
 
 .event.open .content{
@@ -113,46 +136,44 @@ opacity:.5;
 
 <script>
 
+// helper to format rich text
+function formatContent(text){
+
+// sections
+text = text.replace(/Idée principale et contexte :/g, '<h3>Idée principale et contexte</h3>')
+text = text.replace(/Valeurs et caractéristiques :/g, '<h3>Valeurs et caractéristiques</h3>')
+text = text.replace(/Designer clé et objets emblématiques :/g, '<h3>Designer & objets</h3>')
+text = text.replace(/Designer clé :/g, '<h3>Designer clé</h3>')
+text = text.replace(/Designers clés et objets emblématiques :/g, '<h3>Designers & objets</h3>')
+
+// bullets → list
+text = text.replace(/• (.*)/g, '<li>$1</li>')
+text = text.replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
+
+// paragraphs
+text = text.split('\n').map(line=>{
+ if(line.trim().startsWith('<h3>') || line.trim().startsWith('<ul>')) return line
+ if(line.trim()==='') return ''
+ return `<p>${line}</p>`
+}).join('')
+
+return text
+}
+
 const events=[
 {
 period:"1860–1910",
 title:"Arts & Crafts",
 content:`Idée principale et contexte :
-Le mouvement Arts & Crafts apparaît en Angleterre face à l’industrialisation. La production de masse entraîne des objets uniformes, peu durables et sans âme.
+Le mouvement Arts & Crafts apparaît en Angleterre face à l’industrialisation.
 
 Valeurs et caractéristiques :
-• Matériaux naturels
-• Formes simples
-• Durabilité
+ • Matériaux naturels
+ • Formes simples
+ • Durabilité
 
 Designer clé :
 William Morris`
-},
-{
-period:"1890–1910",
-title:"Art nouveau",
-content:`Idée principale et contexte :
-Rejet des styles historiques et inspiration de la nature.
-
-Valeurs :
-• Lignes sinueuses
-• Motifs végétaux
-
-Designer :
-Hector Guimard`
-},
-{
-period:"1919–1933",
-title:"Bauhaus",
-content:`Idée principale :
-Unifier art, artisanat et industrie.
-
-Valeurs :
-• Forme suit fonction
-• Minimalisme
-
-Designers :
-Marcel Breuer, Mies van der Rohe`
 }
 ]
 
@@ -167,7 +188,7 @@ el.innerHTML=`
 <div class="node"></div>
 <div class="period">${e.period}</div>
 <div class="title">${e.title}</div>
-<div class="content">${e.content}</div>
+<div class="content">${formatContent(e.content)}</div>
 `
 
 el.addEventListener("click",()=>{
@@ -187,7 +208,6 @@ timeline.appendChild(el)
 
 })
 
-// service worker
 if("serviceWorker" in navigator){
 navigator.serviceWorker.register("service-worker.js")
 }
